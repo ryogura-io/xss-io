@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Attack Log Administration</h1>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>IP Address</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Payload</th>
+                <th>User Agent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attack in attacks %}
+            <tr>
+                <td>{{ attack.id }}</td>
+                <td>{{ attack.timestamp }}</td>
+                <td>{{ attack.ip_address }}</td>
+                <td><span class="badge badge-danger">{{ attack.attack_type }}</span></td>
+                <td>{{ attack.risk_score }}</td>
+                <td class="payload-cell">
+                    <pre>{{ attack.payload }}</pre>
+                </td>
+                <td class="ua-cell">{{ attack.user_agent[:30] }}...</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

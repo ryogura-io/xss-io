@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Security Dashboard</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Attacks Blocked</h3>
+            <div class="stat-value" id="total-attacks">{{ total_attacks }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>System Status</h3>
+            <div class="stat-value active">Active</div>
+        </div>
+    </div>
+
+    <div class="charts-section">
+        <div class="chart-container">
+            <h3>Attack Distribution</h3>
+            <canvas id="attackChart"></canvas>
+        </div>
+    </div>
+
+    <div class="recent-activity">
+        <h3>Recent Blocked Attempts</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Risk Score</th>
+                    <th>Payload Snippet</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attack in recent_attacks %}
+                <tr>
+                    <td>{{ attack.timestamp.strftime('%H:%M:%S') }}</td>
+                    <td>{{ attack.attack_type }}</td>
+                    <td>{{ attack.risk_score }}</td>
+                    <td class="code-cell">{{ attack.payload[:50] }}...</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

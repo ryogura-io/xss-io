@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Secure Comment System</h1>
+
+    <div class="input-section">
+        <h2>Submit a Comment</h2>
+        <p>Try submitting safe HTML or attempted XSS payloads.</p>
+        <form method="POST" action="/" id="commentForm">
+            <textarea name="comment" id="comment" placeholder="Enter your comment here..." required></textarea>
+            <button type="submit" class="btn-primary">Submit</button>
+        </form>
+    </div>
+
+    {% if result %}
+    <div class="result-section">
+        <h3>Processing Result</h3>
+        <div class="result-card {% if result.detection.is_suspicious %}suspicious{% else %}safe{% endif %}">
+            <div class="status">
+                Status:
+                {% if result.detection.is_suspicious %}
+                <span class="bad">Suspicious (Score: {{ result.detection.score }})</span>
+                {% else %}
+                <span class="good">Safe</span>
+                {% endif %}
+            </div>
+
+            <div class="details">
+                <div class="detail-row">
+                    <strong>Original Input:</strong>
+                    <code>{{ result.original }}</code>
+                </div>
+                <div class="detail-row">
+                    <strong>Sanitized Output:</strong>
+                    <code>{{ result.sanitized }}</code>
+                </div>
+                {% if result.detection.matched_rules %}
+                <div class="detail-row">
+                    <strong>Detected Threats:</strong>
+                    <ul>
+                        {% for rule in result.detection.matched_rules %}
+                        <li>{{ rule }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="comments-section">
+        <h3>Recent Comments</h3>
+        {% if comments %}
+        {% for comment in comments %}
+        <div class="comment-card {% if comment.is_flagged %}flagged{% endif %}">
+            <div class="comment-meta">ID: {{ comment.id }} | {{ comment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+            </div>
+            <div class="comment-body">
+                {{ comment.sanitized_text | safe }}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No comments yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/client_validation.js') }}"></script>
+{% endblock %}
