@@ -21,6 +21,10 @@ def create_app(config_class=Config):
     # Register Blueprints
     app.register_blueprint(dashboard_bp)
 
+    # Create database tables if they don't exist
+    with app.app_context():
+        db.create_all()
+
     @app.route('/', methods=['GET', 'POST'])
     def index():
         if request.method == 'POST':
